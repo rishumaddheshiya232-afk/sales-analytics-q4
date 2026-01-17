@@ -1,30 +1,26 @@
 from utils.file_handler import read_sales_data
-from utils.data_processor import parse_transactions, validate_and_filter, calculate_total_revenue
+from utils.data_processor import parse_transactions, validate_and_filter
 from utils.api_handler import fetch_all_products, create_product_mapping, enrich_sales_data
+from utils.report_generator import generate_sales_report
 
 def main():
-    print("=== Q4: API ENRICHMENT ===")
+    print("=== Q5: FULL SALES ANALYTICS SYSTEM ===")
     
-    # Load sales data
+    # Load and process sales data
     raw_lines = read_sales_data('data/sales_data.txt')
     all_transactions = parse_transactions(raw_lines)
     valid_transactions, invalid_count, summary = validate_and_filter(all_transactions)
-
-    print(f"📊 Loaded {len(valid_transactions)} valid transactions")
     
-    # Show first transaction structure (DEBUG)
-    if valid_transactions:
-        print(f"First transaction type: {type(valid_transactions[0])}")
-        print(f"First transaction keys: {valid_transactions[0].keys() if isinstance(valid_transactions[0], dict) else 'NOT DICT'}")
-    
-    # Fetch API products
+    # API Enrichment
     api_products = fetch_all_products()
     product_mapping = create_product_mapping(api_products)
+    enriched_transactions = enrich_sales_data(valid_transactions, product_mapping)
     
-    # Enrich data
-    enriched_data = enrich_sales_data(valid_transactions, product_mapping)
+    # Generate Report
+    generate_sales_report(valid_transactions, enriched_transactions)
     
-    print("✅ Q4 COMPLETE - Check data/enriched_sales_data.txt")
+    print("🎉 FULL ASSIGNMENT COMPLETE!")
+    print("📄 Check output/sales_report.txt for complete analysis")
 
 if __name__ == "__main__":
     main()
